@@ -3,8 +3,8 @@ project(BinRTOS C)
 
 set(CMAKE_C_STANDARD 11)
 
-include_directories(include)
+include_directories(inc config)
 
-file(GLOB_RECURSE SOURCES "kernel/*.*" "test/*.*")
+file(GLOB_RECURSE SOURCES "src/*.*" "test/*.*")
 
 add_executable(BinRTOS ${SOURCES})

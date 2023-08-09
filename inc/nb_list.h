@@ -13,28 +13,28 @@ extern "C" {
 /* Define --------------------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /**
- * @brief ·µ»Ø±íÍ·
+ * @brief è¿”å›è¡¨å¤´
  */
 #define nb_list_get_head(l) ((l) != NULL ? (l)->head : NULL)
 
 /**
- * @brief ·µ»Ø±íÎ²
+ * @brief è¿”å›è¡¨å°¾
  */
 #define nb_list_get_tail(l) ((l) != NULL ? (l)->tail : NULL)
 
 /**
- * @brief Ë³Ğò±éÀúÁ´±í
- * @param l Á´±í
- * @param n ½Úµã
+ * @brief é¡ºåºéå†é“¾è¡¨
+ * @param l é“¾è¡¨
+ * @param n èŠ‚ç‚¹
  */
 #define nb_list_for_each(l, n) \
 	for ((n) = nb_list_get_head(l); (n) != NULL; (n) = (n)->next)
 
 /**
- * @brief Ë³Ğò°²È«±éÀúÁ´±í£¬Èç¹û±éÀú¹ı³ÌÖĞĞèÒªÉ¾³ıÁ´±í¿ÉÊ¹ÓÃ¸Ãºê
- * @param l Á´±í
- * @param n ½Úµã
- * @param b »º´æ½Úµã
+ * @brief é¡ºåºå®‰å…¨éå†é“¾è¡¨ï¼Œå¦‚æœéå†è¿‡ç¨‹ä¸­éœ€è¦åˆ é™¤é“¾è¡¨å¯ä½¿ç”¨è¯¥å®
+ * @param l é“¾è¡¨
+ * @param n èŠ‚ç‚¹
+ * @param b ç¼“å­˜èŠ‚ç‚¹
  */
 #define nb_list_for_each_safe(l, n, b)              \
 	for ((n) = nb_list_get_head((l)),           \
@@ -42,18 +42,18 @@ extern "C" {
 	     (n) != NULL; (n) = (b), (b) = ((n) != NULL ? (n)->next : NULL))
 
 /**
- * @brief ÄæĞò±éÀúÁ´±í
- * @param l Á´±í
- * @param n ½Úµã
+ * @brief é€†åºéå†é“¾è¡¨
+ * @param l é“¾è¡¨
+ * @param n èŠ‚ç‚¹
  */
 #define nb_list_for_each_prev(l, n) \
 	for ((n) = nb_list_get_tail(l); (n) != NULL; (n) = (n)->prev)
 
 /**
- * @brief ÄæĞò°²È«±éÀúÁ´±í£¬Èç¹û±éÀú¹ı³ÌÖĞĞèÒªÉ¾³ıÁ´±í¿ÉÊ¹ÓÃ¸Ãºê
- * @param l Á´±í
- * @param n ½Úµã
- * @param b »º´æ½Úµã
+ * @brief é€†åºå®‰å…¨éå†é“¾è¡¨ï¼Œå¦‚æœéå†è¿‡ç¨‹ä¸­éœ€è¦åˆ é™¤é“¾è¡¨å¯ä½¿ç”¨è¯¥å®
+ * @param l é“¾è¡¨
+ * @param n èŠ‚ç‚¹
+ * @param b ç¼“å­˜èŠ‚ç‚¹
  */
 #define nb_list_for_each_prev_safe(l, n, b)         \
 	for ((n) = nb_list_get_tail((l)),           \
@@ -78,40 +78,40 @@ typedef struct nb_list_t {
 /* Exported functions ------------------------------------------------------- */
 
 /**
- * ³õÊ¼»¯Á´±í
+ * åˆå§‹åŒ–é“¾è¡¨
  */
 void nb_list_init(nb_list_t *list, size_t size);
 
 /**
- * Ìí¼ÓĞÂ±íÍ·£¬·µ»ØĞÂ±íÍ·µÄµØÖ·
+ * æ·»åŠ æ–°è¡¨å¤´ï¼Œè¿”å›æ–°è¡¨å¤´çš„åœ°å€
  */
 void nb_list_inc_head(nb_list_t *list, nb_node_t *new_node);
 
 /**
- * Ìí¼ÓĞÂ±íÎ²£¬·µ»Ø±íÎ²µØÖ·
+ * æ·»åŠ æ–°è¡¨å°¾ï¼Œè¿”å›è¡¨å°¾åœ°å€
  */
 void nb_list_inc_tail(nb_list_t *list, nb_node_t *new_node);
 
 /**
- * @brief ÔÚÖ¸¶¨Á´±íÖĞÖ¸¶¨½ÚµãºóÔö¼ÓĞÂ½Úµã
+ * @brief åœ¨æŒ‡å®šé“¾è¡¨ä¸­æŒ‡å®šèŠ‚ç‚¹åå¢åŠ æ–°èŠ‚ç‚¹
  */
 void nb_list_inc_next(nb_list_t *list, nb_node_t *node, nb_node_t *new_node);
 
 /**
- * @brief ÔÚÖ¸¶¨Á´±íÖĞÖ¸¶¨½ÚµãÇ°Ôö¼ÓĞÂ½Úµã
+ * @brief åœ¨æŒ‡å®šé“¾è¡¨ä¸­æŒ‡å®šèŠ‚ç‚¹å‰å¢åŠ æ–°èŠ‚ç‚¹
  */
 void nb_list_inc_prev(nb_list_t *list, nb_node_t *node, nb_node_t *new_node);
 
 /**
- * É¾³ı¸Ã½Úµã
+ * åˆ é™¤è¯¥èŠ‚ç‚¹
  */
 void nb_list_delete(nb_list_t *list, nb_node_t *node);
 
 /**
- * ½«Ò»¸ö½ÚµãÒÆ¶¯µ½ĞÂÁ´±í
- * @param olist ½ÚµãËùÔÚµÄÁ´±í
- * @param nlist ĞÂµÄÁ´±í
- * @param node  ½Úµã
+ * å°†ä¸€ä¸ªèŠ‚ç‚¹ç§»åŠ¨åˆ°æ–°é“¾è¡¨
+ * @param olist èŠ‚ç‚¹æ‰€åœ¨çš„é“¾è¡¨
+ * @param nlist æ–°çš„é“¾è¡¨
+ * @param node  èŠ‚ç‚¹
  * @param head true: be the head in the nlist list
  *             false be the tail in the nlist list
  */
@@ -119,21 +119,21 @@ void nb_list_change_node(nb_list_t *olist, nb_list_t *nlist, nb_node_t *node,
 			 bool head);
 
 /**
- * ½«Ò»¸ö½ÚµãÒÆ¶¯µ½Í¬Ò»¸öÁ´±íÖĞµÄÁíÒ»¸ö½ÚµãÖ®Ç°
- * @param n_act ÒªÒÆ¶¯µÄ½Úµã
- * @param node_addr Ä¿±êÎ»ÖÃ
- * @param before ÒÆ¶¯µ½¸Ã½ÚµãÇ°
+ * å°†ä¸€ä¸ªèŠ‚ç‚¹ç§»åŠ¨åˆ°åŒä¸€ä¸ªé“¾è¡¨ä¸­çš„å¦ä¸€ä¸ªèŠ‚ç‚¹ä¹‹å‰
+ * @param n_act è¦ç§»åŠ¨çš„èŠ‚ç‚¹
+ * @param node_addr ç›®æ ‡ä½ç½®
+ * @param before ç§»åŠ¨åˆ°è¯¥èŠ‚ç‚¹å‰
  */
 void nb_list_move_node(nb_list_t *list, nb_node_t *act, nb_node_t *node,
 		       bool before);
 
 /**
- * ·µ»ØÕû¸öÁ´±íµÄ³¤¶È
+ * è¿”å›æ•´ä¸ªé“¾è¡¨çš„é•¿åº¦
  */
 size_t nb_list_get_len(const nb_list_t *list);
 
 /**
- * ¼ì²éÁ´±íÊÇ·ñÎª¿Õ
+ * æ£€æŸ¥é“¾è¡¨æ˜¯å¦ä¸ºç©º
  */
 bool lib_list_is_empty(nb_list_t *list);
 

@@ -123,7 +123,7 @@ void nb_list_change_node(nb_list_t *olist, nb_list_t *nlist, nb_node_t *node,
 	if (olist == NULL || nlist == NULL || node == NULL) {
 		return;
 	}
-	nb_list_delete(olist, node); // 断开节点连接
+	nb_list_delete(olist, node); // 鏂紑鑺傜偣杩炴帴
 	if (head) {
 		nb_node_t *head_node = nlist->head;
 		node->prev = NULL;
@@ -155,11 +155,11 @@ void nb_list_move_node(nb_list_t *list, nb_node_t *act, nb_node_t *node,
 	if (list == NULL || act == NULL || node == NULL) {
 		return;
 	}
-	nb_list_delete(list, act); // 断开节点连接
+	nb_list_delete(list, act); // 鏂紑鑺傜偣杩炴帴
 
-	/* 连接新的节点 */
+	/* 杩炴帴鏂扮殑鑺傜偣 */
 	if (node->next == NULL && node->prev == NULL) {
-		return; // 出现这种情况即为出错
+		return; // 鍑虹幇杩欑鎯呭喌鍗充负鍑洪敊
 	}
 	if (before) {
 		if (node->prev == NULL) {
@@ -188,8 +188,9 @@ void nb_list_move_node(nb_list_t *list, nb_node_t *act, nb_node_t *node,
 
 size_t nb_list_get_len(const nb_list_t *list)
 {
-	if (list == NULL)
+	if (list == NULL) {
 		return 0;
+	}
 
 	nb_node_t *node = list->head;
 	size_t len = 0;
