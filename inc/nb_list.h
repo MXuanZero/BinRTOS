@@ -61,16 +61,17 @@ extern "C" {
 	     (n) != NULL; (n) = (b), (b) = ((n) != NULL ? (n)->next : NULL))
 
 /* Exported types ------------------------------------------------------------*/
-typedef struct nb_note_t nb_node_t;
+struct _nb_note_t;
+struct _nb_list_t;
 
-typedef struct nb_note_t {
-	struct nb_note_t *next;
-	struct nb_note_t *prev;
+typedef struct _nb_note_t {
+	struct _nb_note_t *next;
+	struct _nb_note_t *prev;
 } nb_node_t;
 
-typedef struct nb_list_t {
-	nb_node_t *head;
-	nb_node_t *tail;
+typedef struct _nb_list_t {
+	struct _nb_note_t *head;
+	struct _nb_note_t *tail;
 	size_t size;
 } nb_list_t;
 
@@ -78,17 +79,17 @@ typedef struct nb_list_t {
 /* Exported functions ------------------------------------------------------- */
 
 /**
- * 初始化链表
+ * @brief 初始化链表
  */
 void nb_list_init(nb_list_t *list, size_t size);
 
 /**
- * 添加新表头，返回新表头的地址
+ * @brief 添加新表头，返回新表头的地址
  */
 void nb_list_inc_head(nb_list_t *list, nb_node_t *new_node);
 
 /**
- * 添加新表尾，返回表尾地址
+ * @brief 添加新表尾，返回表尾地址
  */
 void nb_list_inc_tail(nb_list_t *list, nb_node_t *new_node);
 
@@ -103,12 +104,12 @@ void nb_list_inc_next(nb_list_t *list, nb_node_t *node, nb_node_t *new_node);
 void nb_list_inc_prev(nb_list_t *list, nb_node_t *node, nb_node_t *new_node);
 
 /**
- * 删除该节点
+ * @brief 删除该节点
  */
 void nb_list_delete(nb_list_t *list, nb_node_t *node);
 
 /**
- * 将一个节点移动到新链表
+ * @brief 将一个节点移动到新链表
  * @param olist 节点所在的链表
  * @param nlist 新的链表
  * @param node  节点
@@ -119,7 +120,7 @@ void nb_list_change_node(nb_list_t *olist, nb_list_t *nlist, nb_node_t *node,
 			 bool head);
 
 /**
- * 将一个节点移动到同一个链表中的另一个节点之前
+ * @brief 将一个节点移动到同一个链表中的另一个节点之前
  * @param n_act 要移动的节点
  * @param node_addr 目标位置
  * @param before 移动到该节点前
@@ -128,12 +129,12 @@ void nb_list_move_node(nb_list_t *list, nb_node_t *act, nb_node_t *node,
 		       bool before);
 
 /**
- * 返回整个链表的长度
+ * @brief 返回整个链表的长度
  */
 size_t nb_list_get_len(const nb_list_t *list);
 
 /**
- * 检查链表是否为空
+ * @brief 检查链表是否为空
  */
 bool lib_list_is_empty(nb_list_t *list);
 

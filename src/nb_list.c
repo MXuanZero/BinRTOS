@@ -16,7 +16,7 @@ void nb_list_init(nb_list_t *list, size_t size)
 	}
 	list->head = NULL;
 	list->tail = NULL;
-	// size       = (size + 3) & (~0x3);
+	size       = (size + 3) & (~0x3);
 	list->size = size;
 }
 
