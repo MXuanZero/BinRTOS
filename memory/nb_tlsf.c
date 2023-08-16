@@ -4,7 +4,7 @@
 #define tlsf_log(x, ...)
 
 #define TLSF_INLINE inline __attribute__((__always_inline__))
-
+#define TLSF_POOL_SIZE NB_MEM_POOL_SIZE
 #if defined(__cplusplus)
 #define tlsf_decl static inline
 #else
@@ -246,22 +246,22 @@ enum tlsf_private {
 
 /* 上文说过一级区间的数量取决于硬件最大的连续内存大小 */
 /* 考虑到元数据开销，最大可用内存一定是小于这个大小的 */
-#if (NB_MEM_POOL_SIZE <= (256 * 1024))
-	FL_INDEX_MAX = 18, //Each pool can have up 256KB
-#elif (NB_MEM_POOL_SIZE <= (512 * 1024))
-	FL_INDEX_MAX = 19, //Each pool can have up 512KB
-#elif (NB_MEM_POOL_SIZE <= (1 * 1024 * 1024))
-	FL_INDEX_MAX = 20, //Each pool can have up 1MB
-#elif (NB_MEM_POOL_SIZE <= (2 * 1024 * 1024))
-	FL_INDEX_MAX = 21, //Each pool can have up 2MB
-#elif (NB_MEM_POOL_SIZE <= (4 * 1024 * 1024))
-	FL_INDEX_MAX = 22, //Each pool can have up 4MB
-#elif (NB_MEM_POOL_SIZE <= (8 * 1024 * 1024))
-	FL_INDEX_MAX = 23, //Each pool can have up 8MB
-#elif (NB_MEM_POOL_SIZE <= (16 * 1024 * 1024))
-	FL_INDEX_MAX = 24, //Each pool can have up 16MB
-#elif (NB_MEM_POOL_SIZE <= (32 * 1024 * 1024))
-	FL_INDEX_MAX = 25, //Each pool can have up 32MB
+#if (TLSF_POOL_SIZE <= (256 * 1024))
+	FL_INDEX_MAX = 18, // Each pool can have up 256KB
+#elif (TLSF_POOL_SIZE <= (512 * 1024))
+	FL_INDEX_MAX = 19, // Each pool can have up 512KB
+#elif (TLSF_POOL_SIZE <= (1 * 1024 * 1024))
+	FL_INDEX_MAX = 20, // Each pool can have up 1MB
+#elif (TLSF_POOL_SIZE <= (2 * 1024 * 1024))
+	FL_INDEX_MAX = 21, // Each pool can have up 2MB
+#elif (TLSF_POOL_SIZE <= (4 * 1024 * 1024))
+	FL_INDEX_MAX = 22, // Each pool can have up 4MB
+#elif (TLSF_POOL_SIZE <= (8 * 1024 * 1024))
+	FL_INDEX_MAX = 23, // Each pool can have up 8MB
+#elif (TLSF_POOL_SIZE <= (16 * 1024 * 1024))
+	FL_INDEX_MAX = 24, // Each pool can have up 16MB
+#elif (TLSF_POOL_SIZE <= (32 * 1024 * 1024))
+	FL_INDEX_MAX = 25, // Each pool can have up 32MB
 #else
 #error "Higher TLSF pool sizes should be added for this new config"
 #endif
@@ -554,8 +554,8 @@ static TLSF_INLINE void mapping_search(size_t size, int *fli, int *sli)
 	mapping_insert(size, fli, sli);
 }
 
-static TLSF_INLINE block_header_t *search_suitable_block(control_t *control, int *fli,
-					     int *sli)
+static TLSF_INLINE block_header_t *search_suitable_block(control_t *control,
+							 int *fli, int *sli)
 {
 	int fl = *fli;
 	int sl = *sli;
@@ -589,8 +589,8 @@ static TLSF_INLINE block_header_t *search_suitable_block(control_t *control, int
 }
 
 /* Remove a free block from the free list.*/
-static TLSF_INLINE void remove_free_block(control_t *control, block_header_t *block, int fl,
-			      int sl)
+static TLSF_INLINE void remove_free_block(control_t *control,
+					  block_header_t *block, int fl, int sl)
 {
 	block_header_t *prev = block->prev_free;
 	block_header_t *next = block->next_free;
@@ -617,8 +617,8 @@ static TLSF_INLINE void remove_free_block(control_t *control, block_header_t *bl
 }
 
 /* Insert a free block into the free block list. */
-static TLSF_INLINE void insert_free_block(control_t *control, block_header_t *block, int fl,
-			      int sl)
+static TLSF_INLINE void insert_free_block(control_t *control,
+					  block_header_t *block, int fl, int sl)
 {
 	block_header_t *current = control->blocks[fl][sl];
 	tlsf_assert(current && "free list cannot have a null entry");
@@ -655,13 +655,14 @@ static TLSF_INLINE void block_insert(control_t *control, block_header_t *block)
 	insert_free_block(control, block, fl, sl);
 }
 
-static TLSF_INLINE  int block_can_split(block_header_t *block, size_t size)
+static TLSF_INLINE int block_can_split(block_header_t *block, size_t size)
 {
 	return block_size(block) >= sizeof(block_header_t) + size;
 }
 
 /* Split a block into two, the second of which is free. */
-static TLSF_INLINE block_header_t *block_split(block_header_t *block, size_t size)
+static TLSF_INLINE block_header_t *block_split(block_header_t *block,
+					       size_t size)
 {
 	/* Calculate the amount of space left in the remaining block. */
 	block_header_t *remaining = offset_to_block(
@@ -687,7 +688,8 @@ static TLSF_INLINE block_header_t *block_split(block_header_t *block, size_t siz
 }
 
 /* Absorb a free block's storage into an adjacent previous free block. */
-static TLSF_INLINE block_header_t *block_absorb(block_header_t *prev, block_header_t *block)
+static TLSF_INLINE block_header_t *block_absorb(block_header_t *prev,
+						block_header_t *block)
 {
 	tlsf_assert(!block_is_last(prev) && "previous block can't be last");
 	/* Note: Leaves flags untouched. */
@@ -698,7 +700,7 @@ static TLSF_INLINE block_header_t *block_absorb(block_header_t *prev, block_head
 
 /* Merge a just-freed block with an adjacent previous free block. */
 static TLSF_INLINE block_header_t *block_merge_prev(control_t *control,
-					block_header_t *block)
+						    block_header_t *block)
 {
 	if (block_is_prev_free(block)) {
 		block_header_t *prev = block_prev(block);
@@ -714,7 +716,7 @@ static TLSF_INLINE block_header_t *block_merge_prev(control_t *control,
 
 /* Merge a just-freed block with an adjacent free block. */
 static TLSF_INLINE block_header_t *block_merge_next(control_t *control,
-					block_header_t *block)
+						    block_header_t *block)
 {
 	block_header_t *next = block_next(block);
 	tlsf_assert(next && "next physical block can't be null");
@@ -730,8 +732,8 @@ static TLSF_INLINE block_header_t *block_merge_next(control_t *control,
 }
 
 /* Trim any trailing block space off the end of a block, return to pool. */
-static TLSF_INLINE void block_trim_free(control_t *control, block_header_t *block,
-			    size_t size)
+static TLSF_INLINE void block_trim_free(control_t *control,
+					block_header_t *block, size_t size)
 {
 	tlsf_assert(block_is_free(block) && "block must be free");
 	if (block_can_split(block, size)) {
@@ -743,8 +745,8 @@ static TLSF_INLINE void block_trim_free(control_t *control, block_header_t *bloc
 }
 
 /* Trim any trailing block space off the end of a used block, return to pool. */
-static TLSF_INLINE void block_trim_used(control_t *control, block_header_t *block,
-			    size_t size)
+static TLSF_INLINE void block_trim_used(control_t *control,
+					block_header_t *block, size_t size)
 {
 	tlsf_assert(!block_is_free(block) && "block must be used");
 	if (block_can_split(block, size)) {
@@ -774,7 +776,8 @@ block_trim_free_leading(control_t *control, block_header_t *block, size_t size)
 	return remaining_block;
 }
 
-static TLSF_INLINE block_header_t *block_locate_free(control_t *control, size_t size)
+static TLSF_INLINE block_header_t *block_locate_free(control_t *control,
+						     size_t size)
 {
 	int fl = 0, sl = 0;
 	block_header_t *block = 0;
@@ -804,8 +807,8 @@ static TLSF_INLINE block_header_t *block_locate_free(control_t *control, size_t 
 	return block;
 }
 
-static TLSF_INLINE void *block_prepare_used(control_t *control, block_header_t *block,
-				size_t size)
+static TLSF_INLINE void *block_prepare_used(control_t *control,
+					    block_header_t *block, size_t size)
 {
 	void *p = 0;
 	if (block) {
